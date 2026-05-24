@@ -1,0 +1,23 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Data files
+data/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Notes / local files
+notes.txt
+main.py
+# OS files
+.DS_Store
+
+# VS Code settings
+.vscode/
