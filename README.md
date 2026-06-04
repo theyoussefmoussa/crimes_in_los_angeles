@@ -26,12 +26,16 @@ crime-la-analysis/
 │   ├── raw/                        # Raw CSV (excluded from version control)
 │   └── processed/                  # Cleaned parquet output
 ├── notebooks/
-│   └── crime_data_cleaning.ipynb   # Phase 3: Data Cleaning
+│   └── 2_data_cleaning.ipynb       # Phase 3: Data Cleaning
 ├── src/
-│   └── data/
-│       └── data_clean.py           # Production cleaning script
+│   ├── load_data.py                # Load CSV, rename columns, drop DR_NO
+│   ├── clean_basic.py              # Dates, types, duplicates, crime columns
+│   ├── clean_victims.py            # Victim age, sex, descent
+│   ├── clean_location.py           # Premise, weapon, location, coordinates
+│   └── export.py                   # Save cleaned data to parquet
 ├── config/
 │   └── .env                        # DATA_PATH environment variable
+├── main.py                         # Pipeline entry point
 ├── .gitignore
 └── README.md
 ```
@@ -74,9 +78,9 @@ The raw dataset contains 28 features detailing reported criminal activity across
 
 ## 3. Data Cleaning & Preprocessing
 
-**Script:** `src/data/data_clean.py`  
-**Notebook:** `notebooks/crime_data_cleaning.ipynb`  
-**Output:** `data/processed/crime_data_cleaned.parquet`
+**Pipeline:** `main.py` → `src/load_data.py` → `src/clean_basic.py` → `src/clean_victims.py` → `src/clean_location.py` → `src/export.py`  
+**Notebook:** `notebooks/2_data_cleaning.ipynb`  
+**Output:** `data/processed/cleaned_crime_data.parquet`
 
 ### Column Renaming
 
@@ -111,17 +115,17 @@ Rows with coordinates outside Los Angeles bounds (lat 33–35, lon −119 to −
 
 - `reported_date` and `date_occurrence` converted from `object` to `datetime64`.
 - Validated that no record has `reported_date < date_occurrence`.
-- `time_occurrence` (HHMM integer) split into `hour_occurrence` and `minute_occurrence`, both as `int8`.
+- `time_occurrence` (HHMM integer) split into `hour_occurrence` and `minute_occurrence`, both as `Int8`.
 
 ### Missing & Invalid Value Handling
 
 | Column | Issue | Resolution |
 |--------|-------|------------|
-| `victim_age` | 26.8% with age ≤ 0 | Replaced with `NaN`; flagged in `victim_age_status`. For victim crimes, imputed using per-crime-type median. Crimes where ≥90% of records have no age (e.g. vehicle theft) left as `NaN`. |
+| `victim_age` | 26.64% with age ≤ 0 | Replaced with `NaN`; flagged in `victim_age_status`. For victim crimes, imputed using per-crime-type median. Crimes where ≥90% of records have no age (e.g. vehicle theft) left as `NaN`. |
 | `victim_sex` | `H`, `X`, `-`, and `NaN` | Unified as `'Unknown'` |
-| `victim_descent` | `-` and `NaN` (144,643 rows) | Mapped to `'X'` (official LAPD Unknown code) |
+| `victim_descent` | `-` and `NaN` | Mapped to `'X'` (official LAPD Unknown code) |
 | `premise_code` | 16 missing rows | Dropped |
-| `premise_description` | ~500 missing rows | Filled with `'Unknown'` |
+| `premise_description` | Missing rows | Filled with `'Unknown'` |
 | `weapon_used_code` | 67.44% missing | Filled with `-1` (no weapon sentinel) |
 | `weapon_description` | 67.44% missing | Filled with `'Unknown | N/A'` |
 | `crime_code_1` | 11 missing rows | Dropped |
@@ -133,12 +137,12 @@ All columns were cast to their most memory-efficient types:
 
 | Column | dtype |
 |--------|-------|
-| `area_code` | `int8` |
+| `area_code` | `Int16` |
 | `reported_district_number` | `int32` |
 | `crime_code_1` | `int16` |
 | `premise_code` | `int16` |
 | `weapon_used_code` | `int16` |
-| `hour_occurrence`, `minute_occurrence` | `int8` |
+| `hour_occurrence`, `minute_occurrence` | `Int8` |
 | `victim_age` | `Int8` (nullable) |
 | `latitude`, `longitude` | `float32` |
 | `area_name`, `victim_sex`, `victim_descent`, `status`, `status_description`, `victim_age_status` | `category` |
@@ -172,7 +176,7 @@ pip install -r requirements.txt
 echo "DATA_PATH=/your/path/to/data" > config/.env
 
 # Run the cleaning pipeline
-python src/data/data_clean.py
+python3 main.py
 ```
 
 ---
@@ -180,7 +184,8 @@ python src/data/data_clean.py
 ## Author
 
 **Youssef Moussa**
-- [LinkedIn](https://linkedin.com/in/theyoussefmoussa)
-- [GitHub](https://github.com/theyoussefmoussa)
-- [Twitter](https://x.com/theyosefmusa)
-- [Portfolio](https://theyoussefmoussa.github.io)
+<br>
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?logo=linkedin&logoColor=white)](https://linkedin.com/in/theyoussefmoussa)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)](https://github.com/theyoussefmoussa)
+[![X](https://img.shields.io/badge/X-000000?logo=x&logoColor=white)](https://x.com/theyosefmusa)
+[![Portfolio](https://img.shields.io/badge/Portfolio-4CAF50?logo=google-chrome&logoColor=white)](https://theyoussefmoussa.github.io)

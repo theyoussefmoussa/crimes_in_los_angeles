@@ -4,8 +4,8 @@ import pandas as pd
 def clean_basic(df: pd.DataFrame) -> pd.DataFrame:
 
     # ── Dates ──────────────────────────────────────────────────────────────────
-    df['reported_date']   = pd.to_datetime(df['reported_date'], format='%m/%d/%Y', errors='coerce')
-    df['date_occurrence'] = pd.to_datetime(df['date_occurrence'], format='%m/%d/%Y', errors='coerce')
+    df['reported_date']   = pd.to_datetime(df['reported_date'], format="mixed", errors='coerce')
+    df['date_occurrence'] = pd.to_datetime(df['date_occurrence'], format="mixed", errors='coerce')
 
     invalid_dates = df[df['reported_date'] < df['date_occurrence']]
     print(f"Invalid date records (reported < occurred): {len(invalid_dates):,}")
