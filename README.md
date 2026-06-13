@@ -187,7 +187,7 @@ All columns were cast to their most memory-efficient types:
 
 | Column | Description |
 |--------|-------------|
-| `area_crime_rate` | Proportion of total crimes occurring in each LAPD area |
+| `area_crime_share` | Proportion of total crimes occurring in each LAPD area |
 | `lat_bin` | Latitude binned at 0.005° grid (~500m resolution) |
 | `lon_bin` | Longitude binned at 0.005° grid (~500m resolution) |
 | `crime_count` | Number of crimes in the same geo-bin cell |
