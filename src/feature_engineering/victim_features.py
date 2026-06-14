@@ -19,9 +19,8 @@ def add_victim_features(df: pd.DataFrame) -> pd.DataFrame:
     df["age_group"] = df["victim_age"].apply(categorize_age)
 
     print("  [victim] Adding weapon flag...")
-    df["weapon_flag"] = (
-        df["weapon_description"].notna() &
-        (df["weapon_description"].str.upper() != "UNKNOWN")
-    ).astype(int)
 
+    df["weapon_flag"] = (
+    df["weapon_description"].str.contains("unknown|unk|n/a", na=False, case=False)
+        ).astype(int)
     return df
