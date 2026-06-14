@@ -52,8 +52,8 @@ crime-la-analysis/
 │   │   └── premise_features.py                   # Premise grouping
 │   └── eda/
 │       └── eda_univariate.py                     # Univariate analysis script
-├── config/
-│   └── .env                                      # DATA_PATH and DATA_PATH_CLEANED variables
+├── .env
+│                                                 # DATA_PATH and DATA_PATH_CLEANED variables
 ├── main.py                                       # Pipeline entry point
 ├── .gitignore
 └── README.md

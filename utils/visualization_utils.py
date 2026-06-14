@@ -1,7 +1,7 @@
 # visualization_utils.py
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from pathlib import Path
 # ==========================================
 # Global Style Configuration
 # ==========================================
@@ -58,23 +58,14 @@ def setup_axes(title, xlabel='', ylabel='Frequency'):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
-
-def save_figure(filename, path="outputs/graphs"):
-    """
-    Save the current figure.
-
-    Parameters
-    ----------
-    filename : str  — name with extension, e.g. 'age_dist.png'
-    path     : str  — directory to save into (default: 'figures/')
-    """
+def save_figure(filename, path):
+    save_path = Path(path)
     plt.savefig(
-        f"{path}{filename}",
+        save_path / filename,   # correct on all OS, no slash issues
         dpi=300,
         bbox_inches="tight",
         facecolor="white"
     )
-
 
 def get_highlight_colors(values, highlight="crimson", default="steelblue") -> list:
     """Return a color list that accents the max value."""
