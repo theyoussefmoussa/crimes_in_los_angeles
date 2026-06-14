@@ -15,6 +15,7 @@ __pycache__/
 
 # Notes / local files
 notes.md
+tips.md
 # OS files
 .DS_Store
 
