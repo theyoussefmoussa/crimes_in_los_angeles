@@ -1,4 +1,7 @@
 import os
+import sys
+import subprocess
+import argparse
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -16,10 +19,10 @@ from src.feature_engineering.premise_features import add_premise_features
 
 load_dotenv()
 
-DATA_PATH   = os.getenv("DATA_PATH")
-INPUT_FILE  = Path(DATA_PATH) / "Crime_Data_from_2020_to_2024.csv" # type: ignore
-CLEAN_FILE  = Path("data/processed/cleaned_crime_data.parquet")
-FE_FILE     = Path("data/processed/feature_engineered_crime_data.parquet")
+DATA_PATH  = os.getenv("DATA_PATH")
+INPUT_FILE = Path(DATA_PATH) / "Crime_Data_from_2020_to_2024.csv"  # type: ignore
+CLEAN_FILE = Path("data/processed/cleaned_crime_data.parquet")
+FE_FILE    = Path("data/processed/feature_engineered_crime_data.parquet")
 
 
 def run_pipeline():
@@ -51,5 +54,22 @@ def run_pipeline():
     print("\nPipeline complete.")
 
 
+def run_eda():
+    print("\n── EDA Univariate ────────────────────────────────")
+    result = subprocess.run(
+        [sys.executable, "src/eda/eda_univariate.py"],
+        check=False
+    )
+    if result.returncode != 0:
+        print("  [EDA] Warning: EDA script exited with errors — pipeline unaffected.")
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--eda", action="store_true", help="Run EDA after pipeline")
+    args = parser.parse_args()
+
     run_pipeline()
+
+    if args.eda:
+        run_eda()
